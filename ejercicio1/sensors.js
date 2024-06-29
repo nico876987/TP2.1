@@ -1,5 +1,27 @@
 class Sensor {
-    
+    // Ejercicio 1.1
+    constructor(datos){
+        this.id = datos.id;
+        this.name = datos.nombre;
+        
+        const typesAceptados = ['temperature', 'humiditi', 'pressure'];
+        // setType(type) {
+            if (typesAceptados.includes(type)) {
+              this._type = type;
+            } else {
+              throw new Error(`Invalid type. Allowed types are: ${typesAceptados.join(', ')}`);
+            }
+            
+        // }
+        this.type = datos.type;
+        this.value = datos.value;
+        this.unit = datos.unit;
+        this.update_at = datos.update_at;
+    }
+    set updateValue(values){
+        this.value = values.value;
+        this.update_at = values.update_at;
+    }
 }
 
 
@@ -36,7 +58,24 @@ class SensorManager {
         }
     }
 
-    async loadSensors(url) {}
+    async loadSensors(url) {
+        // Ejercicio 1.2
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`No se pudieron cargar los sensores: ${response.statusText}`);
+            }
+            const sensores = await response.json();
+            sensores.forEach(sensor => {
+                const sensor = new Sensor(sensor);
+                this.addSensor(sensor);
+            });
+            this.render();
+        } catch (error) {
+            console.error('Error al cargar los sensores:', error);
+        }
+        
+    }
 
     render() {
         const container = document.getElementById("sensor-container");
